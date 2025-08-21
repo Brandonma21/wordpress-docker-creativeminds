@@ -1,0 +1,42 @@
+services:
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress-a
+    restart: always
+    expose:
+      - 80
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+    volumes:
+      - vlake_wordpress_data_vl:/var/www/html
+    depends_on:
+      - wordpress-db
+    networks:
+      - internal-wordpress
+
+  wordpress-db:
+    image: mariadb:latest
+    container_name: wordpress-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - vlake_wordpress_db_data_vl:/var/lib/mysql
+    networks:
+      - internal-wordpress
+
+volumes:
+  vlake_wordpress_data_vl:
+  vlake_wordpress_db_data_vl:
+
+networks:
+  internal-wordpress:
+    driver: bridge
